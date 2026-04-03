@@ -126,11 +126,8 @@ ui <- page_sidebar(
   sidebar = sidebar(
     
     sliderInput("n", "Nombre d'alumnes:", min = 10, max = 200, value = 50),
-    
     sliderInput("mitjana", "Nota mitjana:", min = 0, max = 10, value = 5),
-    
     sliderInput("sd", "Dispersió (variabilitat):", min = 0.5, max = 3, value = 1),
-    
     sliderInput("bins", "Nombre de barres:", min = 5, max = 30, value = 10)
   ),
   
@@ -142,21 +139,23 @@ server <- function(input, output) {
   
   output$histNotes <- renderPlot({
     
-    # 1️⃣ Generem notes simulades (distribució normal)
-    notes <- rnorm(
+    # 1 Generem notes simulades (distribució normal)
+    # 2 Limitem les notes entre 0 i 10
+    # 3 Definim els bins segons el slider
+    # 4 Fem l'histograma
+    # 5 Afegim línia de la mitjana (extra visual TOP 🔥)
+    
+    
+    notes <- rnorm(     
       n = input$n,
       mean = input$mitjana,
       sd = input$sd
     )
     
-    # 2️⃣ Limitem les notes entre 0 i 10
-    notes <- pmax(pmin(notes, 10), 0)
-    
-    # 3️⃣ Definim els bins segons el slider
+    notes <- pmax(pmin(notes, 10), 0) 
     bins <- seq(0, 10, length.out = input$bins + 1)
     
-    # 4️⃣ Fem l'histograma
-    hist(
+    hist(                                      
       notes,
       breaks = bins,
       col = "#2ecc71",
@@ -166,10 +165,29 @@ server <- function(input, output) {
       ylab = "Nombre d'alumnes"
     )
     
-    # 5️⃣ Afegim línia de la mitjana (extra visual TOP 🔥)
-    abline(v = mean(notes), col = "red", lwd = 2)
+    abline(v = mean(notes), col = "red", lwd = 2) 
     
   })
 }
 
 shinyApp(ui = ui, server = server)
+
+
+#  --------- EXEMPLE 03 ---------
+#  ------------------------------
+
+#    -) Fer exemple que AGAFI DADES DE API METEO
+#    -) Que les representi
+#    -) Max, Min, Dia,...
+
+
+
+#  SEGUIIIIIIIIIIIIIIIR!!!!!!
+
+
+
+
+
+
+
+
