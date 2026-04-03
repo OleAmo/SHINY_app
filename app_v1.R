@@ -217,17 +217,6 @@ server <- function(input, output) {
 shinyApp(ui = ui, server = server)
 
 
-#  --------- EXEMPLE xxxx ---------
-#  ------------------------------
-
-#    -) Fer exemple que AGAFI DADES DE API METEO
-#    -) Que les representi
-#    -) Max, Min, Dia,...
-
-
-
-#  SEGUIIIIIIIIIIIIIIIR!!!!!!
-
 
 
 
