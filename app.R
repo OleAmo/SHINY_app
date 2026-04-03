@@ -3,6 +3,7 @@
 library(shiny)
 library(bslib)
 runExample("01_hello")
+runExample("07_widgets")
 
 
 #  ---- FUNCIONAMENT SHINY ------
