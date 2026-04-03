@@ -201,6 +201,28 @@ shinyApp(ui, server_v2)
 
 
 
+
+#  --------- FEEEEEEEERRRRRRR ---------
+#  -------------------------------------
+
+
+
+#  he preguntat a CHAT GPT !!
+  
+#  dateInput → seleccionar una data
+#  dateRangeInput → seleccionar interval de dates
+# selectInput → seleccionar opcions
+
+
+
+
+
+
+
+
+
+
+
 #  --------- EXEMPLE xxxx ---------
 #  ------------------------------
 
