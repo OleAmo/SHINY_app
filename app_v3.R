@@ -18,7 +18,7 @@ library(shiny)
 
 
 
-
+source("scripts/funcions.R")
 
 
 
