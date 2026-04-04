@@ -201,26 +201,133 @@ shinyApp(ui, server_v2)
 
 
 
-
-#  --------- FEEEEEEEERRRRRRR ---------
-#  -------------------------------------
-
-
-
-#  he preguntat a CHAT GPT !!
   
-#  dateInput → seleccionar una data
-#  dateRangeInput → seleccionar interval de dates
-# selectInput → seleccionar opcions
 
 
 
+#  ----------- EXEMPLE 03 - DATES ----------
+#  -------------------------------------------
+
+#    -) FUNCIONS us de DATES
+#    -) dateInput → seleccionar una data
+
+
+ui <- fluidPage(
+  sliderInput(
+    "temp_max",
+    label = "Temperatura Max",
+    min = 17, 
+    max = 31, 
+    value = 15
+  ),
+  sliderInput(
+    "temp_min",
+    label = "Temperatura Min",
+    min = -5, 
+    max = 18, 
+    value = 9
+  ),
+  dateInput(
+    inputId = "data_examen",
+    label = "Selecciona la data:",
+    value = Sys.Date()
+  ),
+  htmlOutput("text_HTML")
+)
+
+server <- function(input, output) {
+  
+  output$text_HTML <- renderUI({
+    
+    tmax <- input$temp_max
+    tmin <- input$temp_min
+    data <- input$data_examen
+    
+    HTML(paste0(
+      "<h3 style='color:blue;'>EXEMPLE TAULA HTML</h2>",
+      
+      "<h4><b>Les TEMPERATURES:<b></h4>",
+      "<ul>",
+      "<li>Dia seleccionat = [ ",data," ]</li>",
+      "<li>La Temperatura màxima = ",tmax," ºC</li>",
+      "<li>La Temperatura mínim = ",tmin,"ºC</li>",
+      "</ul>"
+      
+    ))
+    
+  })
+}
+
+
+shinyApp(ui, server)
+
+
+#  ----------- EXEMPLE 04 - PERÍODE DATES ----------
+#  -------------------------------------------
+
+#    -) FUNCIONS us de DATES
+#    -) dateRangeInput → seleccionar interval de dates
 
 
 
+ui <- fluidPage(
+  sliderInput(
+    "temp_max",
+    label = "Temperatura Max",
+    min = 17, 
+    max = 31, 
+    value = 15
+  ),
+  sliderInput(
+    "temp_min",
+    label = "Temperatura Min",
+    min = -5, 
+    max = 18, 
+    value = 9
+  ),
+  dateRangeInput(
+    inputId = "periode",
+    label = "Selecciona període:",
+    start = Sys.Date() - 7,
+    end = Sys.Date()
+  ),
+  htmlOutput("text_HTML")
+)
+
+server <- function(input, output) {
+  
+  output$text_HTML <- renderUI({
+    
+    tmax <- input$temp_max
+    tmin <- input$temp_min
+    data <- input$data_examen
+    data_inici <- input$periode[1]
+    data_final <- input$periode[2]
+    num_dies <- data_final-data_inici
+    
+    HTML(paste0(
+      "<h3 style='color:blue;'>EXEMPLE TAULA HTML</h2>",
+      
+      "<h4><b>DIES:<b></h4>",
+      "<ul>",
+      "<li>Dia Inici = [ ",data_inici," ]</li>",
+      "<li>Dia Final = [ ",data_final," ]</li>",
+      "<li>NÚMERO DE DIES = ",num_dies," dies</li>",
+      "</ul>",
+      "</br>",
+      "<h4><b>Les TEMPERATURES:<b></h4>",
+      "<ul>",
+      "<li>La Temperatura màxima = ",tmax," ºC</li>",
+      "<li>La Temperatura mínim = ",tmin,"ºC</li>",
+      "</ul>"
+      
+    ))
+    
+  })
+}
 
 
-
+shinyApp(ui, server)
 
 
 #  --------- EXEMPLE xxxx ---------
