@@ -18,9 +18,14 @@ library(shiny)
 
 
 
+# ----- FUNCIONS en ALTRE ARXIU -------
+# ------------------------------------
+
 source("scripts/funcions.R")
 
 
+# ----- SHINY -------
+# -------------------
 
 
 ui <- fluidPage(
