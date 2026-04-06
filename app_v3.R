@@ -71,10 +71,20 @@ server <- function(input, output) {
       Win_max  <- df$Win_max[1]
       Win_min  <- df$Win_min[1]
       
+      html <- paste("<li>La Temperatura màxima = ",temp_max," ºC</li>",
+      "<li>La Temperatura mínim = ",temp_min," ºC</li>",
+      "<li>La Humitat màxima = ",Hum_max," </li>",
+      "<li>La Humitat mínim = ",Hum_min," </li>",
+      "<li>El Vent màxim = ",Win_max," </li>",
+      "<li>El Vent mínim = ",Win_min," </li>")
+      
       
     } else {
-      temp_max <- "ERROR Data Final"
-      temp_min <- "ERROR Data Final"
+      html <- paste(
+        "<li> ------------------- </li>",
+        "<li>  --- ERROR !!! ---- </li>",
+        "<li> ------------------- </li>",
+        "<li> DIA FINAL >= DIA INCIAL</li>"  )
     }
     
     
@@ -93,12 +103,7 @@ server <- function(input, output) {
       "<h4><b>DADES:<b></h4>",
       "<ul>",
       "<li><b>COMARCA</b> = ",comarca," </li>",
-      "<li>La Temperatura màxima = ",temp_max," ºC</li>",
-      "<li>La Temperatura mínim = ",temp_min," ºC</li>",
-      "<li>La Humitat màxima = ",Hum_max," </li>",
-      "<li>La Humitat mínim = ",Hum_min," </li>",
-      "<li>El Vent màxim = ",Win_max," </li>",
-      "<li>El Vent mínim = ",Win_min," </li>",
+      html,
       "</ul>"
       
     ))
