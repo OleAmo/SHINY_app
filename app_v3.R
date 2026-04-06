@@ -1,8 +1,9 @@
 # install.packages("shiny")
 
 library(shiny)
-
-
+library(sf)
+library(dplyr)
+library(readr)
 
 
 
@@ -24,6 +25,17 @@ library(shiny)
 source("scripts/funcions.R")
 
 
+# ----- DADES -------
+# -------------------
+
+comarques <- st_read("data/processed/COMARQUES_COORDS.gpkg")
+
+comarques_vector <- c()
+
+for(i in comarques$nom_comarca){
+  comarques_vector <- c(comarques_vector,i)
+}
+
 # ----- SHINY -------
 # -------------------
 
@@ -40,7 +52,7 @@ ui <- fluidPage(
   selectInput(
     inputId = "comarca",
     label = "Tria una Comarca:",
-    choices = c("Barcelona", "Girona", "Tarragona")
+    choices = comarques_vector
   ),
   htmlOutput("text_HTML")
 )
@@ -50,8 +62,11 @@ server <- function(input, output) {
   output$text_HTML <- renderUI({
     
     
-    lat <- 41.4051879
-    long <- 1.9964933 
+    comarca <- input$comarca
+    comarca_df <- comarques %>% filter(nom_comarca==comarca)
+  
+    lat <- comarca_df$lat
+    long <- comarca_df$long
     
     data <- input$data_examen
     
@@ -88,11 +103,8 @@ server <- function(input, output) {
     }
     
     
-      
-    comarca <- input$comarca
-    
     HTML(paste0(
-      "<h3 style='color:blue;'>EXEMPLE TAULA HTML</h2>",
+      "<h3 style='color:blue;'>DADES METEO per COMARCA</h2>",
       
       "<h4><b>DIES:<b></h4>",
       "<ul>",
@@ -103,6 +115,7 @@ server <- function(input, output) {
       "<h4><b>DADES:<b></h4>",
       "<ul>",
       "<li><b>COMARCA</b> = ",comarca," </li>",
+      "<li>............................. </li>",
       html,
       "</ul>"
       
@@ -116,18 +129,15 @@ shinyApp(ui, server)
 
 
 
+#  ----- REPRESENTAR TOOOOOOOOOOTS ELS DIES DE DADES ---------
+#  ----------------------------------------------------------
 
-
-#  --------- EXEMPLE xxxx ---------
-#  ------------------------------
-
-#    -) Fer exemple que AGAFI DADES DE API METEO
-#    -) Que les representi
-#    -) Max, Min, Dia,...
+#    -) BUSCAR FORMAT QUE ES VEGI BE
+#    -) HAURIA DE SER FORMAT DATA FRAME
 
 
 
-#  SEGUIIIIIIIIIIIIIIIR!!!!!!
+ 
 
 
 
