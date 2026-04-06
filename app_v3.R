@@ -39,7 +39,7 @@ ui <- fluidPage(
   ),
   selectInput(
     inputId = "comarca",
-    label = "Tria una assignatura:",
+    label = "Tria una Comarca:",
     choices = c("Barcelona", "Girona", "Tarragona")
   ),
   htmlOutput("text_HTML")
@@ -54,13 +54,31 @@ server <- function(input, output) {
     long <- 1.9964933 
     
     data <- input$data_examen
+    
+    
     data_inici <- input$periode[1]
-    data_final <- input$periode[2]
+    data_final <- input$periode[2] 
     
-    create_DF_GEOM <- function(lat,long,data_inici,data_final)
+    if (data_inici<=data_final){
+      df <- create_DF_GEOM(lat,long,data_inici,data_final)
       
-    print(create_DF_GEOM)
+      temp_max <- df$T_max[1]
+      temp_min <- df$T_min[1]
+      
+     
+      Hum_max  <- df$Hum_max[1]
+      Hum_min  <- df$Hum_min[1]
+      Win_max  <- df$Win_max[1]
+      Win_min  <- df$Win_min[1]
+      
+      
+    } else {
+      temp_max <- "ERROR Data Final"
+      temp_min <- "ERROR Data Final"
+    }
     
+    
+      
     comarca <- input$comarca
     
     HTML(paste0(
@@ -75,8 +93,12 @@ server <- function(input, output) {
       "<h4><b>DADES:<b></h4>",
       "<ul>",
       "<li><b>COMARCA</b> = ",comarca," </li>",
-      "<li>La Temperatura màxima =  ºC</li>",
-      "<li>La Temperatura mínim = ºC</li>",
+      "<li>La Temperatura màxima = ",temp_max," ºC</li>",
+      "<li>La Temperatura mínim = ",temp_min," ºC</li>",
+      "<li>La Humitat màxima = ",Hum_max," </li>",
+      "<li>La Humitat mínim = ",Hum_min," </li>",
+      "<li>El Vent màxim = ",Win_max," </li>",
+      "<li>El Vent mínim = ",Win_min," </li>",
       "</ul>"
       
     ))
@@ -86,6 +108,9 @@ server <- function(input, output) {
 
 
 shinyApp(ui, server)
+
+
+
 
 
 #  --------- EXEMPLE xxxx ---------

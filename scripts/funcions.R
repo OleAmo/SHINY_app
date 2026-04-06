@@ -1,4 +1,7 @@
-
+library(sf)
+library(httr)
+library(jsonlite)
+library(tidyverse)
 #  ------- FUNCIÓ = DADES API ---------
 #  ------------------------------------
 
