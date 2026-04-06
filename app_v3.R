@@ -29,20 +29,8 @@ source("scripts/funcions.R")
 
 
 ui <- fluidPage(
-  sliderInput(
-    "temp",
-    label = "Temperatura",
-    min = 5, 
-    max = 21, 
-    value = 11
-  ),
-  sliderInput(
-    "rang",
-    label = "Rang de Temperatura",
-    min = 1, 
-    max = 7, 
-    value = 3
-  ),
+  
+
   dateRangeInput(
     inputId = "periode",
     label = "Selecciona període:",
@@ -61,18 +49,17 @@ server <- function(input, output) {
   
   output$text_HTML <- renderUI({
     
-    temp <- input$temp
-    rang <- input$rang
     
-    temperatura <- calcul_temp(temp,rang)
-    
-    temp_max <- temperatura$max
-    temp_min <- temperatura$min
+    lat <- 41.4051879
+    long <- 1.9964933 
     
     data <- input$data_examen
     data_inici <- input$periode[1]
     data_final <- input$periode[2]
-    num_dies <- data_final-data_inici
+    
+    create_DF_GEOM <- function(lat,long,data_inici,data_final)
+      
+    print(create_DF_GEOM)
     
     comarca <- input$comarca
     
@@ -83,14 +70,13 @@ server <- function(input, output) {
       "<ul>",
       "<li>Dia Inici = [ ",data_inici," ]</li>",
       "<li>Dia Final = [ ",data_final," ]</li>",
-      "<li>NÚMERO DE DIES = ",num_dies," dies</li>",
       "</ul>",
       "</br>",
-      "<h4><b>Les TEMPERATURES:<b></h4>",
+      "<h4><b>DADES:<b></h4>",
       "<ul>",
       "<li><b>COMARCA</b> = ",comarca," </li>",
-      "<li>La Temperatura màxima = ",temp_max," ºC</li>",
-      "<li>La Temperatura mínim = ",temp_min,"ºC</li>",
+      "<li>La Temperatura màxima =  ºC</li>",
+      "<li>La Temperatura mínim = ºC</li>",
       "</ul>"
       
     ))
