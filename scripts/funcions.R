@@ -11,14 +11,10 @@ calcul_temp <- function(temp,rang){
 #  ------- FUNCIÓ = DADES API ---------
 #  ------------------------------------
 
-#    -) OBTENCIÓ DADES DIFERENTS PUNTS
+#    -) OBTENCIÓ DADES 
 
-#    -) Venen de la API OPEN METEO
-#    -) Les usaré per practicar
-
-#    -) Creo FUNCIÓ que INTRODUINT LAT, LONG, DATA 1 i DATA 2
-#    -) Ens dongui diferents DATA SETS
-
+#    -) DADES de la API OPEN METEO
+#    -) ATRIBUTS de la FUNCIÓ = LAT, LONG, DATA 1 i DATA 2
 
 dades_API <- function(lat,long,date_1,date_2){
   
@@ -43,15 +39,9 @@ dades_API <- function(lat,long,date_1,date_2){
 # --------- CREACIÓ DADES en f(x) DIES ----------
 # ------------------------------------------------
 
-#   -) Creo una funció que depengui del numero de dies
-#   -) En funció del Nº Dies Calcularà:
-#   -) més o menys valors de Max, Min = Temp, Humitat, Vent
-
-#   -) Ex: si les dades de la API son de 5 dies = ha d'haver 5 max, min,...
-#   -) Ex: si les dades de la API son de 47 dies = ha d'haver 47 max, min,...
-
-#    la funcio CALCUL DE DADE (DADES, DIES) HA DE SABER QUANS DIES TTINC
-#    EN FUNCIÓ D'AIXO FAREM DIFERNTS CALCULS
+#   -) FUNCIO ATRIBUTS = DADES (Meteo), DATA (Inci i Final)
+#   -) CALCULARÀ = Max, Min = Temp, Humitat, Vent
+#   -) Ho DONA en format VECTOR
 
 
 dades_create <- function(df,dia_Inici,dia_Final){
@@ -97,9 +87,9 @@ dades_create <- function(df,dia_Inici,dia_Final){
 # ----------- CREACIÓ DIES en f(x) DIES ----------
 # ------------------------------------------------
 
-#   -) Creo una funció que depengui del numero de dies
-#   -) En funció de dies em crei un VECTOR del 1r a l'ultim dia
-
+#   -) FUNCIÓ ATRIBUT = Dia Inci i Final
+#   -) CREA Vector = Del 1r a l'ultim dia
+#   -) PREVEU l cas que DIA INICI = FINAL 
 
 
 dies_create <- function(df,dia_Inici,dia_Final){
@@ -148,16 +138,15 @@ dies_create <- function(df,dia_Inici,dia_Final){
 # ----------- CREACIÓ DATA FRAME en f(x) DIES ----------
 # -------------------------------------------------------
 
-#   -) Creo una funció que depengui del numero de dies
-#   -) En funció de dies crearà un DATA FRAME
-#   -) El data FRAME tindrà 7 files
-#   -) DIES, Temp_max, Temp_min,...
-#   -) I les columnes seran depenent del Num de dies
+#   -) FUNCIO ATRIBUT = Dades, Data Inci i Final
+#   -) CREA UN DATA FRAME
+#   -) Tindrà 7 COLUMNES = Dies, Temp Max, Temp Min,....
+#   -) Les FILES son els DIES DIFERENTS
 
 #   -) Dins seu té 2 FUNCIONS que ja gestionen les dades en f(x) dels dies:
 
-#        -) dies_create
-#        -) dades_create
+#        -) dies_create() 
+#        -) dades_create()
 
 
 DF_create <- function(dades,dia_Inici,dia_Final){
@@ -194,23 +183,23 @@ DF_create <- function(dades,dia_Inici,dia_Final){
 
 
 
-#  ------- FUNCIÓ 05 = ASSIGNAR GEOMETRIA ---------
-#  -------------------------------------------------
+#  ------- FUNCIÓ ASSIGNAR GEOMETRIA ---------
+#  -------------------------------------------
 
 
-#  CREO FUNCIÓ PER ASSIGNAR GEOMETRIAO
-#  CREO Columna GEOMETRIA
-#  Transformo el CRS a 25831
+#   -) FUNCIO ATRIBUTS = DataFrame, Long i Lat
+#   -) CREO Columna GEOMETRIA
+#   -) Transformo el CRS a 25831
 
-#  AFEGEIXO la GEOMETRIA 
-#  Com que CADA FILA és el MATEIX PUNT
-#  Cada fila TINDRÀ LA MATEIXA GEOMETRIA (el punt)
+#   -) CADA FILA és el MATEIX PUNT
+#   -) Ja que cada FILA és DIA DIFERENT però MATEIX PUNT
 
-#  REPETIR GEOMETRIA:
-#  FAIG funcio REP() = Repetir
-#  nrow() = PER CADA FILA
 
-#  I ho guardo a la carpeta PROCESSED com a SHAPE
+#   -) Com REPETIR GEOMETRIA a cada fila?
+#   -) FAIG funcio REP() = Repetir
+#   -) nrow() = PER CADA FILA
+
+#   -) I ho guardo a la carpeta PROCESSED com a SHAPE
 
 
 assign_Geom <- function(dades,long,lat){
@@ -228,13 +217,15 @@ assign_Geom <- function(dades,long,lat){
 }
 
 
-#  ------- FUNCIÓ 06 = AUTOMATIZACIÓ FINAL ---------
+#  ------- FUNCIÓ DATA FRAME AMB GEOMETRIA ---------
 #  -------------------------------------------------
 
 
-#  NOMÉS amb LAT, LONG, DIA 1 i DIA 2
-#  TINC EL DF FINAL amb GOEMETRIA
-#  PUC FER UNA FUNCIÓ QUE HO ENGLOBI
+#   -) FUNCIÓ ATRIBUTS = Lat, Long, Dat Inci, Final
+#   -) Aplico TOTES les Funcions ANTERIORS
+#   -) Em dona un DATA FRAME:
+#         +) 8 Columnes = Dies, Temp_max, Temp_min,...Geometry
+#         +) Tantes files com DIES DIFERENTS
 
 
 
