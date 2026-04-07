@@ -123,32 +123,37 @@ server <- function(input, output) {
     if (data_inici<=data_final){
       
       df <- create_DF_GEOM(lat,long,data_inici,data_final)
+      num_dies <-as.numeric(length(df$Dies)) 
       
-      dia <- df$Dies[1]
-      temp_max <- df$T_max[1]
-      temp_min <- df$T_min[1]
+      html <- ""
       
-     
-      Hum_max  <- df$Hum_max[1]
-      Hum_min  <- df$Hum_min[1]
-      Win_max  <- df$Win_max[1]
-      Win_min  <- df$Win_min[1]
-     
-      html <- paste(
-      
-        "<tr>",
-        "<td>",dia,"</td>" , 
-        "<td>",temp_max," ºC</td>",  
-        "<td>",temp_min," ºC</td>",
-        "<td>",Hum_max,"</td> " ,
-        "<td>",Hum_min,"</td> ", 
-        "<td>",Win_max,"</td> " , 
-        "<td>",Win_min,"</td> " , 
-        "</tr>"
-     
+      for (i in 1:num_dies){
         
+        dia <- df$Dies[i]
+        temp_max <- df$T_max[i]
+        temp_min <- df$T_min[i]
+        
+        
+        Hum_max  <- df$Hum_max[i]
+        Hum_min  <- df$Hum_min[i]
+        Win_max  <- df$Win_max[i]
+        Win_min  <- df$Win_min[i]
+        
+        html <- paste(html,
+          
+          "<tr>",
+          "<td>",dia,"</td>" , 
+          "<td>",temp_max," ºC</td>",  
+          "<td>",temp_min," ºC</td>",
+          "<td>",Hum_max,"</td> " ,
+          "<td>",Hum_min,"</td> ", 
+          "<td>",Win_max,"</td> " , 
+          "<td>",Win_min,"</td> " , 
+          "</tr>"
+          
         )
-      
+        
+      }
       
     } else {
       html <- paste( "<td class='error'> ERROR  !!! </td>",
@@ -184,11 +189,11 @@ shinyApp(ui, server)
 
 
 
-#  ----- REPRESENTAR TOOOOOOOOOOTS ELS DIES DE DADES ---------
-#  ----------------------------------------------------------
+#  ----- REPRESENTAR EN MAPA ---------
+#  -----------------------------------
 
 #    -) BUSCAR FORMAT QUE ES VEGI BE
-#    -) HAURIA DE SER FORMAT DATA FRAME
+#    -) HAURIA DE SER FORMAT SHAPE A MAPA
 
 
 

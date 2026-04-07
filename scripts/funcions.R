@@ -235,5 +235,3 @@ create_DF_GEOM <- function(lat,long,data_1,data_2){
   
 }
 
-df <- create_DF_GEOM(41.3927674,2.0577873,"2026-04-01","2026-04-01")
-
