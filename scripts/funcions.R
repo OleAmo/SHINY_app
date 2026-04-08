@@ -235,7 +235,3 @@ create_DF_GEOM <- function(lat,long,data_1,data_2){
   
 }
 
-
-
-
-
