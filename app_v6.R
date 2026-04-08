@@ -4,53 +4,44 @@ library(shiny)
 library(sf)
 library(dplyr)
 library(readr)
+library(leaflet)
+
+# -------- MAPA COMARQUES ---------
+# ---------------------------------
+
+#   -) USARE Shape COMARQUE
+#   -) Pintaré els PUNTS en funció TEMP_MAX
+
+#   -) Necessito un DATA FRAME
+#   -) UI = nomes poso TITOL i que SURT un LEAFLETOUT
+#   -) SERVER:
+#        +) leaflet() = Indica quin DATAFRAME projectaré
+#        +) addMarkers() = sòn per ETIQUETES
+#              -) per funcionar necessita saber:
+#              -) La columna LONGITUD i LATITUD del DATA FRAME
+#              -) I quin nom donc
 
 
+# - DADES ---
+# ------------
 
-#  --------- EXEMPLE - FUNCIÓ EXTERNA --------
-#  -------------------------------------------
-
-#    -) FUNCIONS us de RANG DE DATES
-#    -) FUNCIONS de OPTIONS
-#    -) dateRangeInput → seleccionar interval de dates
-#    -) choices → seleccionar opcions select
-
-#    -) AFEGEIXO FUNCIONS Exteriors 
-#    -) Son les FUNCIONS de OBTENIR DADES D'API OPEN METEO
-
-#    -) Afegir CSS
-#    -) Per afegir CSS en lloc diferent al d'HTML(paste())
-#    -) O faig a la UI usant:
-
-#        -)   tags$head(
-#        -)     tags$style(HTML("
-
-#    -) I després al server en el HTML(paste()) afegeixo class='xxx'
-
-# ----- FUNCIONS en ALTRE ARXIU -------
-# ------------------------------------
 
 source("scripts/funcions.R")
-
-
-# ----- DADES -------
-# -------------------
 
 comarques <- st_read("data/processed/COMARQUES_COORDS.gpkg")
 
 comarques_vector <- c()
-
 for(i in comarques$nom_comarca){
-  comarques_vector <- c(comarques_vector,i)
-}
+   comarques_vector <- c(comarques_vector,i)
+ }
 
-# ----- SHINY -------
-# -------------------
+
+# --- UI ---
+# ----------
 
 
 ui <- fluidPage(
-  
-
+  titlePanel("Mapa comarques"),
   dateRangeInput(
     inputId = "periode",
     label = "Selecciona període:",
@@ -62,55 +53,32 @@ ui <- fluidPage(
     label = "Tria una Comarca:",
     choices = comarques_vector
   ),
-  tags$head(
-    tags$style(HTML("
-    
-      .titol {
-        color: blue;
-        font-size: 22px;
-      }
-      
-      .titol_2{
-        color: #383194;
-        font-size: 17px;
-      
-      }
-      
-      .error{
-        color = #6E1B00 ;
-        background-color: #FA845C;
-      
-      }
-      
-      
-      table {
-        font-family: arial, sans-serif;
-        border-collapse: collapse;
-        width: 100%;
-      }
-      
-      td, th {
-        border: 1px solid #dddddd;
-        text-align: left;
-        padding: 8px;
-      }
-      
-      tr:nth-child(even) {
-        background-color: #dddddd;
-      }
-    "))
-  ),
-  htmlOutput("text_HTML")
+  leafletOutput("mapa", height = 500)
 )
 
-server <- function(input, output) {
+
+# --- SERVER ---
+# --------------
+
+
+server <- function(input, output, session) {
   
-  output$text_HTML <- renderUI({
-    
+
+  
+  
+  
+  
+  # ---- MAPA ----
+  # --------------
+  
+  output$mapa <- renderLeaflet({
+   
+    # ---- DADES DEL SHAPE ----
+    # -------------------------
     
     comarca <- input$comarca
     comarca_df <- comarques %>% filter(nom_comarca==comarca)
-  
+    
     lat <- comarca_df$lat
     long <- comarca_df$long
     
@@ -120,80 +88,64 @@ server <- function(input, output) {
     data_inici <- input$periode[1]
     data_final <- input$periode[2] 
     
-    if (data_inici<=data_final){
-      
-      df <- create_DF_GEOM(lat,long,data_inici,data_final)
-      num_dies <-as.numeric(length(df$Dies)) 
-      
-      html <- ""
-      
-      for (i in 1:num_dies){
-        
-        dia <- df$Dies[i]
-        temp_max <- df$T_max[i]
-        temp_min <- df$T_min[i]
-        
-        
-        Hum_max  <- df$Hum_max[i]
-        Hum_min  <- df$Hum_min[i]
-        Win_max  <- df$Win_max[i]
-        Win_min  <- df$Win_min[i]
-        
-        html <- paste(html,
-          
-          "<tr>",
-          "<td>",dia,"</td>" , 
-          "<td>",temp_max," ºC</td>",  
-          "<td>",temp_min," ºC</td>",
-          "<td>",Hum_max,"</td> " ,
-          "<td>",Hum_min,"</td> ", 
-          "<td>",Win_max,"</td> " , 
-          "<td>",Win_min,"</td> " , 
-          "</tr>"
-          
-        )
-        
-      }
-      
-    } else {
-      html <- paste( "<td class='error'> ERROR  !!! </td>",
-                     "<td class='error'> Data 2 > Data 1 </td>")
-    }
+    #  ---- CANVI DE PROJECCIÓ ----
+    # -----------------------------
+    
+    #   -) comarca_select <- st_transform(comarca_select, 4326)
+    #   -) Passar a PROJECCIÓ 4326  (google maps)
+    #   -) El shape estava en 25831 (catalunya)
+    
+   
+    comarca_select <- create_DF_GEOM(lat,long,data_inici,data_final)
+    comarca_select_2 <- st_transform(comarca_select, 4326)
+    
+    # de tots els dies només projecto UN DIA
+    comarca_select_2 <-comarca_select_2[1,] 
+    
+    # ---- PALETA DE COLOR ----
+    # -------------------------
+    
+    #     -) Creo una PALETA DE COLOR
+    #     -) Pot ser diferents = "YlOrRd", "Blues"
+    #     -) Serà en funció de la columna T_max
+    
+    pal <- colorNumeric("viridis", domain = comarca_select$T_max)
     
     
-    HTML(paste0(
-      "<p class='titol'>DADES METEO per COMARCA</p>",
-      "<p class='titol_2'>COMARCA = ",comarca,"</p>",
-      
-      "<table>",
+    leaflet(data = comarca_select_2) %>%
+      addTiles() %>%
+      setView(lng = 2.0, lat = 41.6, zoom = 7) %>%
+      addCircles(
         
-        "<tr>",
-        "<th>Dia</th>" ,
-        "<th>Temp_Max</th>",
-        "<th>Temp_Min</th>",
-        "<th>Hum_Max</th>" ,
-        "<th>Hum_Min</th>",
-        "<th>Win_Max</th>",
-        "<th>Win_Min</th>", 
-        "</tr>",
-      html,
-      "</table>"
-      
-    ))
-    
+        fillColor = ~pal(T_max),   # color interior
+        color = "black",           # contorn
+        fillOpacity = 0.8,
+        radius = 8000,
+        popup = ~paste(comarca," = ",as.character(T_max)," ºC")
+      )
   })
 }
-
 
 shinyApp(ui, server)
 
 
 
-#  ----- REPRESENTAR EN MAPA ---------
+#  -------- ERROR!!!!  ------------
 #  -----------------------------------
 
-#    -) BUSCAR FORMAT QUE ES VEGI BE
-#    -) HAURIA DE SER FORMAT SHAPE A MAPA
+#    -) NO PROJECTA
+#    -) NO DETECTA LA LATITUD I LONGITUD
+#    -) Si poso AIXÒ en el SERVER si que funciona
+#         -) long = 2.0
+#         -) lat = 41.6
+
+#    -) REVISAR ja que ara barrejo el que feia amb:
+
+#        -) mapa_exemple = output$mapa <- renderLeaflet({
+#        -) app_v5       = output$text_HTML <- renderUI({
+
+#    -) Deu haver temes de REACTIVE DADES o algo per l'estil
+
 
 
 
