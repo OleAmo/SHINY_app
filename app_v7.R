@@ -93,7 +93,6 @@ server <- function(input, output, session) {
     #         -) Valor de CADA TEMPERATURA MAXIMIA
     #         -) Crear una PALETA DE COLOR
     
-    
     df <- create_DF_GEOM(lat,long,data_inici,data_final)
     
     # ---- PALETA DE COLOR ----
@@ -134,4 +133,20 @@ server <- function(input, output, session) {
 }
 
 shinyApp(ui, server)
+
+
+# ------------- ERROR !! -------------
+# ------------------------------------
+
+
+#   -) Corregir en SHINY
+#   -) La LATITUD i LONGITUD =  No son correctes i donen TEMP RARES ALTES
+#         -) lat <- comarca_df$lat
+#        -) long <- comarca_df$long
+
+
+
+
+
+
 
