@@ -1,38 +1,32 @@
 # install.packages("leaflet")
+# install.packages("shinycssloaders")
 
 library(shiny)
 library(leaflet)
 library(sf)
 library(dplyr)
 library(readr)
+library(shinycssloaders)   # RELLOTGE SHINY està pensant al inici
 
 
 
-
-# -------- MAPA API METEO ---------
-# ---------------------------------
-
-#   -) XXXX
-
+# -------- FUNCIONS per obtenrir DADES API METEO ---------
+# -------------------------------------------------------
 
 source("scripts/funcions.R")
 
-# --- OBTENIR PUNT GEOMETRIA ---
+
+# ----- COMARQUES GEOMETRIA ----
 # ------------------------------
 
-#   -) OBTINDREM Long i Lag 
-#   -) Podrem PORJECTAR ho al mapa
+#   -) Es la geometria a projectar al mapa
+#   -) Són els punts x CADA COMARCA = SORTIRANT TOTS ALHORA AL MAPA
 
 #   -) Passar a PROJECCIÓ 4326  (google maps)
 #   -) El shape estava en 25831 (catalunya)
 
 comarques <- st_read("data/processed/COMARQUES_COORDS.gpkg")
 comarques <- st_transform(comarques, 4326)
-comarques_vector <- c()
-
-for(i in comarques$nom_comarca){
-  comarques_vector <- c(comarques_vector,i)
-}
 
 # --- UI ---
 # ----------
@@ -41,18 +35,18 @@ for(i in comarques$nom_comarca){
 ui <- fluidPage(
   
   titlePanel("Mapa Comarques"),
+  dateInput(
+    inputId = "data",
+    label = "Selecciona una data:",
+    value = Sys.Date()
+  ),
   dateRangeInput(
     inputId = "periode",
     label = "Selecciona període:",
     start = Sys.Date() - 7,
     end = Sys.Date()
   ),
-  selectInput(
-    inputId = "comarca",
-    label = "Tria una Comarca:",
-    choices = comarques_vector
-  ),
-  leafletOutput("mapa", height = 500)
+  leafletOutput("mapa", height = 500)%>% withSpinner()
  
 )
 
@@ -66,28 +60,19 @@ server <- function(input, output, session) {
   
   output$mapa <- renderLeaflet({
     
-    # --- DADES SHAPE ----
-    # --------------------
-    
-    #   -) LAT i LONG de COMARCA
-    #   -) DATA = Ve del INPUT de la UI
-    
-    comarca <- input$comarca
-    comarca_df <- comarques %>% filter(nom_comarca==comarca)
-    
-    # --- LAT i LONG ---
-    # ------------------
+    # --- LAT i LONG de TOTES LES COMARQUES ---
+    # -----------------------------------------
     
     #   -) Tranasformo a 4326 (x projectar al Mapa)
     #   -) Calculo Lat i Long
     
-    coords <- comarca_df$geom %>% st_transform(4326) %>% 
+    coords <- comarques$geom %>% st_transform(4326) %>% 
       st_coordinates()
     long <- coords[1]
     lat <- coords[2]
     
-    # --- DATA ---------
-    # ------------------
+    # --- DATES ---------
+    # -------------------
     
     data <- input$data_examen
     
@@ -107,7 +92,7 @@ server <- function(input, output, session) {
 
     comarques_dades <- comarques 
     
-    comarques_dades$data <- "2026-03-01" #data_inici
+    comarques_dades$data <- data_inici
     
     comarques_dades <- comarques_dades %>%
       rowwise() %>%
@@ -142,7 +127,7 @@ server <- function(input, output, session) {
         fillOpacity = 0.8,
         radius = 8000,
         popup = ~paste0(
-          "<b>Comarca:</b> ", comarca, "<br>",
+          "<b>Comarca:</b> ", comarques_dades$nom_comarca, "<br>",
           "<b>Dia:</b> ",data_inici , "<br>",
           "<b>Temp Màxma:</b> ", comarques_dades$T_max, " ºC <br>",
           "<b>Humitat Màx:</b> ", comarques_dades$Hum_max, " % <br>",
@@ -162,8 +147,8 @@ server <- function(input, output, session) {
 shinyApp(ui, server)
 
 
-# ------------ EL CALCULAR TOTES LE COMARQUES ALHORA 
-# --------------  TARDA BASTANT RATO !!!!
+# ------------ ELIMINAR LO DE DOS DATES DE INICI
+# ---------------------------------------------------
 
 
 
