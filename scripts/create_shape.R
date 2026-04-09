@@ -30,8 +30,8 @@ create_coordenates <- function(data){
       coords = st_centroid(geometry) %>%
         st_transform(4326) %>% 
         st_coordinates() ,
-      lat = coords[,1],
-      long = coords[,2]
+      long = coords[,1],
+      lat = coords[,2]
     )
   
   long <- data_processed$long
