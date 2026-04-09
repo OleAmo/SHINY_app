@@ -105,7 +105,9 @@ server <- function(input, output, session) {
     
     df <- create_DF_GEOM(lat,long,data_inici,data_final)
     
-    
+    T_Max <- df[1,]$T_max 
+    Hum_Max <- df[1,]$Hum_max 
+    Win_Max <- df[1,]$Win_max
     
     # ---- PALETA DE COLOR ----
     # -------------------------
@@ -122,16 +124,16 @@ server <- function(input, output, session) {
       setView(lng = 2.0, lat = 41.6, zoom = 7) %>%
       addCircles(
         
-        fillColor = ~pal(df$T_max),   # color interior
+        fillColor = ~pal(df$T_max),   # color interior  
         color = "black",        # contorn
         fillOpacity = 0.8,
         radius = 8000,
         popup = ~paste0(
           "<b>Comarca:</b> ", comarca, "<br>",
           "<b>Dia:</b> ", data_inici, "<br>",
-          "<b>Temp Màxma:</b> ", df[1,]$T_max, " ºC <br>",
-          "<b>Humitat Màx:</b> ", df[1,]$Hum_max, " % <br>",
-          "<b>Vent Màxma:</b> ", df[1,]$Win_max, " km/h <br>"
+          "<b>Temp Màxma:</b> ", T_Max, " ºC <br>",
+          "<b>Humitat Màx:</b> ", Hum_Max, " % <br>",
+          "<b>Vent Màxma:</b> ", Win_Max, " km/h <br>"
         )
         ) %>%
       addLegend(
@@ -147,14 +149,6 @@ server <- function(input, output, session) {
 shinyApp(ui, server)
 
 
-# ------------- ERROR !! -------------
-# ------------------------------------
-
-
-#   -) Corregir en SHINY
-#   -) La LATITUD i LONGITUD =  No son correctes i donen TEMP RARES ALTES
-#         -) lat <- comarca_df$lat
-#        -) long <- comarca_df$long
 
 
 
