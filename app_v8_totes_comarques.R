@@ -6,7 +6,7 @@ library(leaflet)
 library(sf)
 library(dplyr)
 library(readr)
-library(shinycssloaders)   # RELLOTGE SHINY està pensant al inici
+library(shinycssloaders)   # SALVA PANTALLES de SHINY. Per si està pensant a l'inici
 
 
 
@@ -40,13 +40,20 @@ ui <- fluidPage(
     label = "Selecciona una data:",
     value = Sys.Date()
   ),
-  dateRangeInput(
-    inputId = "periode",
-    label = "Selecciona període:",
-    start = Sys.Date() - 7,
-    end = Sys.Date()
-  ),
-  leafletOutput("mapa", height = 500)%>% withSpinner()
+  leafletOutput("mapa", height = 500) %>% withSpinner() # Salava Pantalles
+
+  # ------ MISSTGE de APP està PENSANT ----
+  # ---------------------------------------
+  
+  #   -)   Quan una APP està CALCULANT DADES i TARDA
+  #   -)   Es pot posar un SALVAPANTALLES mentres pensa
+  #   -)   Es posa darrere de leafletOutput()
+  
+  #   -)   TIPUS:
+  
+  #   -)   withSpinner() → rodeta de càrrega
+  #   -)   showNotification() → missatge “calculant...”   = complicat de usar
+  #   -)   withProgress() → barra de progrés              = complicat de usar
  
 )
 
@@ -71,14 +78,13 @@ server <- function(input, output, session) {
     long <- coords[1]
     lat <- coords[2]
     
-    # --- DATES ---------
+    # --- DATA ---------
     # -------------------
     
-    data <- input$data_examen
     
-    data_inici <- input$periode[1]
-    data_final <- input$periode[2]
-    
+    data <- input$data
+   
+  
     
     # --- DADES API METEO ----
     # ------------------------
@@ -92,7 +98,7 @@ server <- function(input, output, session) {
 
     comarques_dades <- comarques 
     
-    comarques_dades$data <- data_inici
+    comarques_dades$data <- data
     
     comarques_dades <- comarques_dades %>%
       rowwise() %>%
@@ -128,7 +134,7 @@ server <- function(input, output, session) {
         radius = 8000,
         popup = ~paste0(
           "<b>Comarca:</b> ", comarques_dades$nom_comarca, "<br>",
-          "<b>Dia:</b> ",data_inici , "<br>",
+          "<b>Dia:</b> ",data , "<br>",
           "<b>Temp Màxma:</b> ", comarques_dades$T_max, " ºC <br>",
           "<b>Humitat Màx:</b> ", comarques_dades$Hum_max, " % <br>",
           "<b>Vent Màxma:</b> ", comarques_dades$Win_max, " km/h <br>"
@@ -147,10 +153,12 @@ server <- function(input, output, session) {
 shinyApp(ui, server)
 
 
-# ------------ ELIMINAR LO DE DOS DATES DE INICI
+# ------------ NOVA FUNCIÓ ---------------------
 # ---------------------------------------------------
 
-
+#    -) Que vagi més ràpid = Potser sense geometria?? Funcions més rapides!!
+#    -) Que mostri Temp, Hum , minima
+#    -) Estadística amb dies ???
 
 
 
