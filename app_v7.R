@@ -75,11 +75,21 @@ server <- function(input, output, session) {
     comarca <- input$comarca
     comarca_df <- comarques %>% filter(nom_comarca==comarca)
     
-    lat <- comarca_df$lat
-    long <- comarca_df$long
+    # --- LAT i LONG ---
+    # ------------------
+    
+    #   -) Tranasformo a 4326 (x projectar al Mapa)
+    #   -) Calculo Lat i Long
+    
+    coords <- comarca_df$geom %>% st_transform(4326) %>% 
+      st_coordinates()
+    long <- coords[1]
+    lat <- coords[2]
+    
+    # --- DATA ---------
+    # ------------------
     
     data <- input$data_examen
-    
     
     data_inici <- input$periode[1]
     data_final <- input$periode[2]
@@ -94,6 +104,8 @@ server <- function(input, output, session) {
     #         -) Crear una PALETA DE COLOR
     
     df <- create_DF_GEOM(lat,long,data_inici,data_final)
+    
+    
     
     # ---- PALETA DE COLOR ----
     # -------------------------
