@@ -98,17 +98,26 @@ server <- function(input, output, session) {
     # --- DADES API METEO ----
     # ------------------------
     
-    #   -) Uso FUNCIÓ de extreure DADES API = create_DF_GEOM()
-    #   -) Les usaré NOMÉS per
-    #         -) Valor de CADA TEMPERATURA MAXIMIA
-    #         -) Crear una PALETA DE COLOR
+    #   -) Uso el SHAPE COMARQUES
+    #   -) A cada fila afegeixo 3 COLUMENS = MUTATE
+    #   -) Cada columna aplico FUNCIÓ de extreure DADES API = create_DF_GEOM()
+    #   -) Per aplicar FUNCIÓ a cada fila uso rowwise()
+  
+    #   -) PROBLEMA = Va leeeeeeeeeeeeent!!  
+
+    comarques_dades <- comarques 
     
-    df <- create_DF_GEOM(lat,long,data_inici,data_final)
+    comarques_dades$data <- "2026-03-01" #data_inici
     
-    T_Max <- df[1,]$T_max 
-    Hum_Max <- df[1,]$Hum_max 
-    Win_Max <- df[1,]$Win_max
+    comarques_dades <- comarques_dades %>%
+      rowwise() %>%
+      mutate(
+        T_max = create_DF_GEOM(lat,long,data,data)$T_max,
+        Hum_max = create_DF_GEOM(lat,long,data,data)$Hum_max,
+        Win_max = create_DF_GEOM(lat,long,data,data)$Win_max
+      )
     
+
     # ---- PALETA DE COLOR ----
     # -------------------------
     
@@ -116,30 +125,34 @@ server <- function(input, output, session) {
     #     -) Pot ser diferents = "YlOrRd", "Blues"
     #     -) Serà en funció de la columna T_max
     
-    pal <- colorNumeric("viridis", domain = c(-10, 50))
+    
+    temp_max <- max(comarques_dades$T_max)
+    temp_min <- min(comarques_dades$T_max)
+    
+    pal <- colorNumeric("viridis", domain = c(temp_min, temp_max))
     
     
-    leaflet(data = comarca_df) %>%
+    leaflet(data = comarques_dades) %>%
       addTiles() %>%
       setView(lng = 2.0, lat = 41.6, zoom = 7) %>%
       addCircles(
         
-        fillColor = ~pal(df$T_max),   # color interior  
+        fillColor = ~pal(comarques_dades$T_max),   # color interior  
         color = "black",        # contorn
         fillOpacity = 0.8,
         radius = 8000,
         popup = ~paste0(
           "<b>Comarca:</b> ", comarca, "<br>",
-          "<b>Dia:</b> ", data_inici, "<br>",
-          "<b>Temp Màxma:</b> ", T_Max, " ºC <br>",
-          "<b>Humitat Màx:</b> ", Hum_Max, " % <br>",
-          "<b>Vent Màxma:</b> ", Win_Max, " km/h <br>"
+          "<b>Dia:</b> ",data_inici , "<br>",
+          "<b>Temp Màxma:</b> ", comarques_dades$T_max, " ºC <br>",
+          "<b>Humitat Màx:</b> ", comarques_dades$Hum_max, " % <br>",
+          "<b>Vent Màxma:</b> ", comarques_dades$Win_max, " km/h <br>"
         )
         ) %>%
       addLegend(
         pal = pal,
-        values = c(0, 50),
-        title = "Temperatura"
+        values = c(temp_min, temp_max),
+        title = "Temp_Maxima"
       )
   })
   
@@ -148,6 +161,9 @@ server <- function(input, output, session) {
 
 shinyApp(ui, server)
 
+
+# ------------ EL CALCULAR TOTES LE COMARQUES ALHORA 
+# --------------  TARDA BASTANT RATO !!!!
 
 
 
