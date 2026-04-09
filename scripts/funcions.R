@@ -246,5 +246,15 @@ create_DF_GEOM <- function(lat,long,data_1,data_2){
   
 }
 
+create_DF_NO_GEOM <- function(lat,long,data_1,data_2){
+  
+  dades_api <- dades_API(lat,long,data_1,data_2)
+  
+  dades_api_processed <- DF_create(dades_api$hourly,data_1,data_2)
+  
+  return(dades_api_processed)
+  
+}
+
 
 

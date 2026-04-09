@@ -153,14 +153,6 @@ server <- function(input, output, session) {
 shinyApp(ui, server)
 
 
-# ------------ NOVA FUNCIÓ ---------------------
-# ---------------------------------------------------
-
-#    -) Que vagi més ràpid = Potser sense geometria?? Funcions més rapides!!
-#    -) Que mostri Temp, Hum , minima
-#    -) Estadística amb dies ???
-
-
 
 
 

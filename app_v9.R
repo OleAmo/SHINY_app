@@ -10,6 +10,25 @@ library(shinycssloaders)   # SALVA PANTALLES de SHINY. Per si està pensant a l'
 
 
 
+
+# ----- OBJECTIU QUE VAGI MÉS RÀPID ----
+# ---------------------------------------
+
+#   -) USO per calcular el TEMPS la f(x) = system.time({
+#   -) Li assigno variable TEMPS
+#   -) I dsps faig PRINT de TEMPS
+#   -) I dona :
+
+#   user  system elapsed 
+#   1.77    0.06   10.49 
+
+#   -) On el ELAPSED és el TEMPS que usa la funció = 10,49 segons
+#   -) I aixó que la funció que CREA LES DADES = create_DF_NO_GEOM
+#   -) La he modificat de l'arxiu FUNCIONS per que no calculi GEOMETRIA
+
+
+
+
 # -------- FUNCIONS per obtenrir DADES API METEO ---------
 # -------------------------------------------------------
 
@@ -67,16 +86,6 @@ server <- function(input, output, session) {
   
   output$mapa <- renderLeaflet({
     
-    # --- LAT i LONG de TOTES LES COMARQUES ---
-    # -----------------------------------------
-    
-    #   -) Tranasformo a 4326 (x projectar al Mapa)
-    #   -) Calculo Lat i Long
-    
-    coords <- comarques$geom %>% st_transform(4326) %>% 
-      st_coordinates()
-    long <- coords[1]
-    lat <- coords[2]
     
     # --- DATA ---------
     # -------------------
@@ -100,17 +109,17 @@ server <- function(input, output, session) {
     
     comarques_dades$data <- data
     
-    temps <-  system.time({
+    temps <-  system.time({                   # Calcula DURADA de al funció
     comarques_dades <- comarques_dades %>%
       rowwise() %>%
       mutate(
-        T_max = create_DF_GEOM(lat,long,data,data)$T_max,
-        Hum_max = create_DF_GEOM(lat,long,data,data)$Hum_max,
-        Win_max = create_DF_GEOM(lat,long,data,data)$Win_max
-      )
+        T_max = create_DF_NO_GEOM(lat,long,data,data)$T_max,
+        Hum_max = create_DF_NO_GEOM(lat,long,data,data)$Hum_max,
+        Win_max = create_DF_NO_GEOM(lat,long,data,data)$Win_max
+      ) 
     })
     
-    print(temps)
+    print(temps)                           # ESCRIU la DURADA de al funció
     
 
     # ---- PALETA DE COLOR ----
@@ -156,7 +165,7 @@ server <- function(input, output, session) {
 
 shinyApp(ui, server)
 
-temps
+
 # ------------ NOVA FUNCIÓ ---------------------
 # ---------------------------------------------------
 
