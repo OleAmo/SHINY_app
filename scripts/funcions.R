@@ -30,6 +30,8 @@ dades_API <- function(lat,long,date_1,date_2){
   
 }
 
+
+
 # --------- CREACIÓ DADES en f(x) DIES ----------
 # ------------------------------------------------
 
@@ -151,6 +153,12 @@ DF_create <- function(dades,dia_Inici,dia_Final){
   hum <- df[3]
   w <- df[4]
   
+  #t <- df$hourly.temperature_2m
+  #hum <- df$hourly.relative_humidity_2m
+  #w <- df$hourly.windspeed_10m
+  
+  
+  
   dies <- dies_create(df,dia_Inici,dia_Final)
   
   t_dades <- dades_create(t,dia_Inici,dia_Final)
@@ -175,6 +183,9 @@ DF_create <- function(dades,dia_Inici,dia_Final){
   
 }
 
+#df <- dades_API(41.4051879,1.9964941,"2026-03-02","2026-03-03")
+#data <- dades_create(df,"2026-03-02","2026-03-03")
+#data
 
 
 #  ------- FUNCIÓ ASSIGNAR GEOMETRIA ---------
@@ -234,4 +245,8 @@ create_DF_GEOM <- function(lat,long,data_1,data_2){
   return(dades_api_processed_geom)
   
 }
+
+df <- create_DF_GEOM(41.4051879,1.9964941,"2026-03-02","2026-03-02")
+dades <- dades_API(41.4051879,1.9964941,"2026-03-02","2026-03-02")
+
 
