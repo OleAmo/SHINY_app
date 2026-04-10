@@ -28,6 +28,13 @@ library(shinycssloaders)   # SALVA PANTALLES de SHINY. Per si està pensant a l'
 
 
 
+#   -) HE CREAT UNA NOVA FUNCIÓ 
+#   -) La he creat al arxiu FUNCIONS_V2
+#   -) Pero va molt lenta
+
+#   user  system elapsed 
+#   1.44    0.04   14.15
+
 
 # -------- FUNCIONS per obtenrir DADES API METEO ---------
 # -------------------------------------------------------
