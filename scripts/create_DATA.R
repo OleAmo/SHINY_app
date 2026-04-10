@@ -62,29 +62,41 @@ num <- as.integer(as.Date(data_2) - as.Date(data_1))
 
 
 llista <- list()
+llista_2 <- list()
 
-for(a in 1:num_lat){
+
   
   for(i in 1:num){
+    
+    for(a in 1:num_lat){
     llista[[i]] <- data.frame(
       Dies = as.Date(data_1)+i,
       lat = lat_v[a],
       long = long_v[a],
-      T_max = create_DF_GEOM(lat,long,data_1,data_2)$T_max[i],
-      T_min = create_DF_GEOM(lat,long,data_1,data_2)$T_min[i],
-      Hum_max = create_DF_GEOM(lat,long,data_1,data_2)$Hum_max[i],
-      Hum_min = create_DF_GEOM(lat,long,data_1,data_2)$Hum_min[i],
-      Win_max = create_DF_GEOM(lat,long,data_1,data_2)$Win_max[i],
-      Win_min = create_DF_GEOM(lat,long,data_1,data_2)$Win_min[i]
-      
+      T_max = create_DF_GEOM(lat_v[a],long_v[a],data_1,data_2)$T_max[i],
+      T_min = create_DF_GEOM(lat_v[a],long_v[a],data_1,data_2)$T_min[i],
+      Hum_max = create_DF_GEOM(lat_v[a],long_v[a],data_1,data_2)$Hum_max[i],
+      Hum_min = create_DF_GEOM(lat_v[a],long_v[a],data_1,data_2)$Hum_min[i],
+      Win_max = create_DF_GEOM(lat_v[a],long_v[a],data_1,data_2)$Win_max[i],
+      Win_min = create_DF_GEOM(lat_v[a],long_v[a],data_1,data_2)$Win_min[i]
       )
+    }
   }
 
+
+for(i in 1:num){
+  print("FOR_i")
+  
+  for(a in 1:num_lat){
+    print("FOR_A")
+  }
 }
 
 
-df <- bind_rows(llista)
+
+df <- bind_rows(llista_2)
 df
+
 
 
 #  ---------- GUARDAR DF = RDS ------------
