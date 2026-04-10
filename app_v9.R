@@ -114,9 +114,9 @@ server <- function(input, output, session) {
     comarques_dades <- comarques_dades %>%
       rowwise() %>%
       mutate(
-        T_max = create_DF_NO_GEOM(lat,long,data,data)$T_max,
-        Hum_max = create_DF_NO_GEOM(lat,long,data,data)$Hum_max,
-        Win_max = create_DF_NO_GEOM(lat,long,data,data)$Win_max
+        T_max = create_DF_NO_GEOM_ONE_DAY(lat,long,data)$T_max,
+        Hum_max = create_DF_NO_GEOM_ONE_DAY(lat,long,data)$Hum_max,
+        Win_max = create_DF_NO_GEOM_ONE_DAY(lat,long,data)$Win_max
       ) 
     })
     

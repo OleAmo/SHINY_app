@@ -2,6 +2,71 @@ library(sf)
 library(httr)
 library(jsonlite)
 library(tidyverse)
+
+
+# --------- FUNCIÓ MOLT EFICINET UN DIA ----------
+# ------------------------------------------------
+
+#   -) FUNCIO ATRIBUTS = LAT i LONG , DATA (Inci i Final)
+#   -) CALCULARÀ = Max, Min = Temp, Humitat, Vent
+#   -) Ho DONA en format VECTOR
+#   -) Dies T_max T_min Hum_max Hum_min Win_max Win_min
+
+
+
+
+create_DF_NO_GEOM_ONE_DAY <- function(lat,long,date){
+  
+  res <- GET(
+    "https://archive-api.open-meteo.com/v1/archive",
+    query = list(
+      latitude = lat,
+      longitude = long,
+      start_date = date,
+      end_date = date,
+      hourly = "temperature_2m,relative_humidity_2m,windspeed_10m"
+    )
+  )  
+  
+  text <- content(res, "text")
+  dades <- fromJSON(text)
+  
+  temp_vec <- dades$hourly$temperature_2m
+  hum_vec <- dades$hourly$relative_humidity_2m
+  wind_vec <- dades$hourly$windspeed_10m
+  
+  resultat <- data.frame(
+    Dies = date,
+    T_max = max(temp_vec),
+    T_min = min(temp_vec),
+    Hum_max = max(hum_vec),
+    Hum_min = min(hum_vec),
+    Win_max = max(wind_vec),
+    Win_min = min(wind_vec)
+    
+  )
+  
+  return(resultat)
+  
+}
+
+
+
+# ------------- TAMPOC ÉS EFICIENT -------------
+# ----------------------------------------------
+
+#   TARDA MOOOOOOOOOOOOOOOOOOOOLT!!! = 14 seg
+
+
+
+
+
+# ------------------------------------------------
+# ------------------------------------------------
+# ++++++++         [ ANTIC  ]          +++++++++++
+# ------------------------------------------------
+# ------------------------------------------------
+
 #  ------- FUNCIÓ = DADES API ---------
 #  ------------------------------------
 
@@ -29,6 +94,8 @@ dades_API <- function(lat,long,date_1,date_2){
   return(dades_2)
   
 }
+
+
 
 
 
@@ -255,6 +322,10 @@ create_DF_NO_GEOM <- function(lat,long,data_1,data_2){
   return(dades_api_processed)
   
 }
+
+
+dade_old <- create_DF_NO_GEOM(41.32810,1.3084410,"2026-03-01","2026-03-01")
+dade_old
 
 
 
