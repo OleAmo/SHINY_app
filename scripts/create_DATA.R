@@ -41,70 +41,72 @@ comarques <- st_transform(comarques, 4326)
 
 
 
-create_DF_NO_GEOM_ONE_DAY <- function(lat,long,date){
-  
-  res <- GET(
-    "https://archive-api.open-meteo.com/v1/archive",
-    query = list(
-      latitude = lat,
-      longitude = long,
-      start_date = date,
-      end_date = date,
-      hourly = "temperature_2m,relative_humidity_2m,windspeed_10m"
-    )
-  )  
-  
-  text <- content(res, "text")
-  dades <- fromJSON(text)
-  
-  temp_vec <- dades$hourly$temperature_2m
-  hum_vec <- dades$hourly$relative_humidity_2m
-  wind_vec <- dades$hourly$windspeed_10m
-  
-  resultat <- data.frame(
-    Dies = date,
-    T_max = max(temp_vec),
-    T_min = min(temp_vec),
-    Hum_max = max(hum_vec),
-    Hum_min = min(hum_vec),
-    Win_max = max(wind_vec),
-    Win_min = min(wind_vec)
-    
-  )
-  
-  return(resultat)
-  
-}
-
-
 #  ------------ PROVA DE CREAR DATA FARAME ----------
 # --------------------------------------------------
 
-comarques
+#   -) NO EM SRUT BE
+#   -) NO em fa un DF amb TANTES FILES COM DIES I lat i long diferents
+
+
 
 data_1 <- "2026-02-10"
 data_2 <- "2026-02-15"
 
-lat <- 41.32810 
-long <- 1.3084410
+lat_v <- c(41.32810, 42.30470, 41.38778)
+long_v <- c(1.3084410, 2.9537545, 1.6970029)
 
-comarques_dades <- comarques %>%
-  rowwise() %>%
-  mutate(
-    T_max = create_DF_GEOM(lat,long,data_1,data_2)$T_max,
-    Hum_max = create_DF_GEOM(lat,long,data_1,data_2)$Hum_max,
-    Win_max = create_DF_GEOM(lat,long,data_1,data_2)$Win_max
-  )
+num_lat <- 3
 
-dresultat <- data.frame(
-  Dies = date,
-  T_max = max(temp_vec),
-  T_min = min(temp_vec),
-  Hum_max = max(hum_vec),
-  Hum_min = min(hum_vec),
-  Win_max = max(wind_vec),
-  Win_min = min(wind_vec)
+
+num <- as.integer(as.Date(data_2) - as.Date(data_1)) 
+
+
+llista <- list()
+
+for(a in 1:num_lat){
   
-)
+  for(i in 1:num){
+    llista[[i]] <- data.frame(
+      Dies = as.Date(data_1)+i,
+      lat = lat_v[a],
+      long = long_v[a],
+      T_max = create_DF_GEOM(lat,long,data_1,data_2)$T_max[i],
+      T_min = create_DF_GEOM(lat,long,data_1,data_2)$T_min[i],
+      Hum_max = create_DF_GEOM(lat,long,data_1,data_2)$Hum_max[i],
+      Hum_min = create_DF_GEOM(lat,long,data_1,data_2)$Hum_min[i],
+      Win_max = create_DF_GEOM(lat,long,data_1,data_2)$Win_max[i],
+      Win_min = create_DF_GEOM(lat,long,data_1,data_2)$Win_min[i]
+      
+      )
+  }
+
+}
+
+
+df <- bind_rows(llista)
+df
+
+
+#  ---------- GUARDAR DF = RDS ------------
+#  ----------------------------------------
+
+#   -) Vull guardar DINS de RSTUDIO la info del GRAN DATA FRAME de Meteo
+#   -) El format més eficient es RDS = No vull GEOMETRIA
+
+#        -) guarda l’objecte exactament com és a R
+#        -) es carrega molt ràpid
+#        -) ocupa poc
+#        -) manté tipus de dades (Date, numeric, character, etc.)
+#        -) és ideal per Shiny
+
+
+
+saveRDS(df, "data/processed/prova.rds")
+
+prova <- readRDS("data/processed/prova.rds")
+
+
+
+
 
 
