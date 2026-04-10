@@ -40,13 +40,41 @@ comarques <- st_read("data/processed/COMARQUES_COORDS.gpkg")
 comarques <- st_transform(comarques, 4326)
 
 
+#  ------------ PROVA SENZILLA ----------
+# ---------------------------------------
 
-#  ------------ PROVA DE CREAR DATA FARAME ----------
-# --------------------------------------------------
+#   -) Creo un DATA FRAME amb dos FORS
+#   -) El 1r FOR és per les DATES
+#   -) El 2n FOR es per les DADES
 
-#   -) NO EM SRUT BE
-#   -) NO em fa un DF amb TANTES FILES COM DIES I lat i long diferents
+df <- data.frame()
 
+for(a in 1:3) {
+  for (i in 1:5) {
+    
+    fila <- data.frame(
+      
+      dia = paste("dia_",a),
+      id = i,
+      quadrat = i^2,
+      doble = i*2
+    )
+    
+    df <- rbind(df, fila)
+  }
+}
+
+print(df)
+
+
+
+
+
+#  ------------ PROVA NOVA DE CREAR DATA FARAME ----------
+# ----------------------------------------------------------
+
+#   -) Aplico NOU BUCLE de FORS
+#   -) Aveure si va!
 
 
 data_1 <- "2026-02-10"
@@ -57,19 +85,15 @@ long_v <- c(1.3084410, 2.9537545, 1.6970029)
 
 num_lat <- 3
 
+num_dies <- as.integer(as.Date(data_2) - as.Date(data_1)) 
 
-num <- as.integer(as.Date(data_2) - as.Date(data_1)) 
+df <- data.frame()
 
-
-llista <- list()
-llista_2 <- list()
-
-
-  
-  for(i in 1:num){
+for(a in 1:num_lat) {
+  for (i in 1:num_dies) {
     
-    for(a in 1:num_lat){
-    llista[[i]] <- data.frame(
+    fila <- data.frame(
+      
       Dies = as.Date(data_1)+i,
       lat = lat_v[a],
       long = long_v[a],
@@ -79,24 +103,13 @@ llista_2 <- list()
       Hum_min = create_DF_GEOM(lat_v[a],long_v[a],data_1,data_2)$Hum_min[i],
       Win_max = create_DF_GEOM(lat_v[a],long_v[a],data_1,data_2)$Win_max[i],
       Win_min = create_DF_GEOM(lat_v[a],long_v[a],data_1,data_2)$Win_min[i]
-      )
-    }
-  }
-
-
-for(i in 1:num){
-  print("FOR_i")
-  
-  for(a in 1:num_lat){
-    print("FOR_A")
+    )
+    
+    df <- rbind(df, fila)
   }
 }
 
-
-
-df <- bind_rows(llista_2)
 df
-
 
 
 #  ---------- GUARDAR DF = RDS ------------
@@ -112,12 +125,11 @@ df
 #        -) és ideal per Shiny
 
 
-
-saveRDS(df, "data/processed/prova.rds")
-
-prova <- readRDS("data/processed/prova.rds")
+saveRDS(df, "data/processed/prova_2.rds")
 
 
+prova_2  <- readRDS("data/processed/prova_2.rds")
+prova_2
 
 
 
