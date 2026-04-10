@@ -33,6 +33,7 @@ library(shinycssloaders)   # SALVA PANTALLES de SHINY. Per si està pensant a l'
 # -------------------------------------------------------
 
 source("scripts/funcions.R")
+source("scripts/funcions_v2.R")
 
 
 # ----- COMARQUES GEOMETRIA ----
