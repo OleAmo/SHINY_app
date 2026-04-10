@@ -9,6 +9,24 @@ library(readr)
 library(shinycssloaders)   # SALVA PANTALLES de SHINY. Per si està pensant a l'inici
 
 
+# ---------- FEINA A FER  ---------------
+# ---------------------------------------
+
+
+#   -) He creat ariux CREATE_DATA.R
+#   -) Vull crear TOTA LA INFO DE 3 SETMANES 
+#   -) La guardaré en un SHAPE
+#   -) Així la APP SHANY en activar-se anira més rapida
+
+
+
+
+
+
+
+
+
+
 
 
 # ----- OBJECTIU QUE VAGI MÉS RÀPID ----
