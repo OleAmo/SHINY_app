@@ -117,12 +117,13 @@ print(temps)                           # ESCRIU la DURADA de al funció
 #        -) és ideal per Shiny
 
 
-saveRDS(df, "data/processed/comarques_.rds")
+
 
 
 prova_2  <- readRDS("data/processed/prova_2.rds")
 prova_2
 
 
+saveRDS(df, "data/processed/comarques_.rds")
 
 
